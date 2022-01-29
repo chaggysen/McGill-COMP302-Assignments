@@ -76,7 +76,7 @@ let convert_dist ((from_unit, val_) : dist_unit value) to_unit : dist_unit value
              else notimplemented())
   | Meter -> (if to_unit = Foot then (to_unit, val_ /. 0.3048)
               else if to_unit = Meter then (to_unit, val_)
-              else if to_unit = Mile then (to_unit, val_ /. 0.3048 *. 5280.)
+              else if to_unit = Mile then (to_unit, val_ /. 0.3048 /. 5280.)
               else notimplemented()) 
   | Mile -> (if to_unit = Foot then (to_unit, val_ *. 5280.)
              else if to_unit = Meter then (to_unit, val_ *. 5280. *. 0.3048)
