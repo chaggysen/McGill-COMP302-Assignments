@@ -86,15 +86,23 @@ let convert_dist ((from_unit, val_) : dist_unit value) to_unit : dist_unit value
 ;;
 
 let convert_speed ((from_unit, val_) : speed_unit value) to_unit : speed_unit value =
-  notimplemented ()
+  let distance = (convert_dist (fst from_unit, val_) (fst to_unit)) in 
+  let time = (convert_time (snd from_unit, 1.) (snd to_unit)) in
+  ((fst distance, fst time), (snd distance) /. (snd time) )
 ;;
 
 let add_speed (a : speed_unit value) ((b_unit, b_val) : speed_unit value) : speed_unit value = 
-  notimplemented ()
+  let a_unit = fst a in
+  let a_val = snd a in 
+  let speed = convert_speed (a_unit, a_val) b_unit in 
+  (b_unit, b_val +. snd speed)
 ;;
 
 let dist_traveled time ((speed_unit, speed_val) : speed_unit value) : dist_unit value = 
-  notimplemented ()
+  let time_unit = fst time in 
+  let time_val = snd time in 
+  let traveled_time = convert_time (time_unit, time_val) (snd speed_unit) in
+  (fst speed_unit, speed_val *. snd traveled_time)
 ;;
 
 (* Section 3 : recursive data types/induction *)
