@@ -107,7 +107,28 @@ let dist_traveled time ((speed_unit, speed_val) : speed_unit value) : dist_unit 
 
 (* Section 3 : recursive data types/induction *)
 
-let passes_da_vinci_tests : (tree * bool) list = [] ;;
+let passes_da_vinci_tests : (tree * bool) list = [
+  (Branch (5., [
+       Branch (3., [Leaf; Leaf; Leaf]);
+       Leaf;
+       Branch (4., [])
+     ]), true);
+  (Branch (5., [
+       Branch (8., [Leaf; Leaf; Leaf]);
+       Leaf;
+       Branch (4., [])
+     ]), false); 
+  (Branch (5., [
+       Branch (3., [Branch (4., []); Leaf; Leaf]);
+       Leaf;
+       Branch (4., [])
+     ]), false);
+  (Branch (0., []), true); 
+  (Leaf, true);
+  (Branch (0., [Leaf]), true);
+  (Branch(0., [Branch(1., [])]), false);
+  (Branch(9., [Branch(1., [Branch(9., [])])]), false)
+] ;;
 
 let rec passes_da_vinci t = 
   notimplemented ()
