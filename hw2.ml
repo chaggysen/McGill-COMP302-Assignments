@@ -112,7 +112,12 @@ let passes_da_vinci_tests : (tree * bool) list = [
        Branch (3., [Leaf; Leaf; Leaf]);
        Leaf;
        Branch (4., [])
-     ]), true);
+     ]), true); 
+  (Branch (5., [
+       Branch (3., [Branch(2., []); Branch(4., []); Leaf]);
+       Leaf;
+       Branch (4., [])
+     ]), false);
   (Branch (5., [
        Branch (8., [Leaf; Leaf; Leaf]);
        Leaf;
@@ -125,11 +130,29 @@ let passes_da_vinci_tests : (tree * bool) list = [
      ]), false);
   (Branch (0., []), true); 
   (Leaf, true);
-  (Branch (0., [Leaf]), true);
+  (Branch(0., [Leaf]), true);
   (Branch(0., [Branch(1., [])]), false);
   (Branch(9., [Branch(1., [Branch(9., [])])]), false)
 ] ;;
 
+let rec sum_of_squares list sum = 
+  match list with
+  | [] -> sum
+  | Leaf :: tl -> sum_of_squares tl sum
+  | Branch (width, subtree) :: tl -> sum_of_squares tl (sum +. (width *. width)) 
+                                       
+let rec checker list = 
+  match list with 
+  | [] -> true
+  | Leaf :: tl -> checker tl
+  | Branch (width, subtree) :: tl -> (
+      let branch_width_square = width *. width in 
+      let child_sum_of_square = sum_of_squares subtree 0. in 
+      (if child_sum_of_square > branch_width_square or (not (checker subtree)) then false
+       else checker tl)
+    )
+    
 let rec passes_da_vinci t = 
-  notimplemented ()
+  checker [t]
+    
 ;;
