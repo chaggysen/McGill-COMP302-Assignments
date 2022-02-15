@@ -18,8 +18,10 @@ let string_implode (l : char list) : string =
 (*--------------------------------------------------------------*)
                      
 (* 2.1 Compute the even natural numbers up to an exclusive limit. *)
-let evens (max : int) : int list =
-  raise NotImplemented
+let evens (max : int) : int list = 
+  if max = 0 then []
+  else
+    0 :: unfold (fun x -> (x + 2, x + 2)) (fun x -> if x + 2 >= max then true else false) 0
 
 (* 2.2 Compute the fibonacci sequence up to an exclusive limit. *)
 let fib (max : int) : int list =
