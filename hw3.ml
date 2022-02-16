@@ -21,11 +21,13 @@ let string_implode (l : char list) : string =
 let evens (max : int) : int list = 
   if max = 0 then []
   else
-    0 :: unfold (fun x -> (x + 2, x + 2)) (fun x -> if x + 2 >= max then true else false) 0
+    0 :: unfold (fun x -> (x + 2, x + 2)) (fun x -> (x + 2) >= max) 0
 
 (* 2.2 Compute the fibonacci sequence up to an exclusive limit. *)
 let fib (max : int) : int list =
-  raise NotImplemented
+  if max <= 1 then []
+  else
+    1 :: unfold (fun (a,b) -> (a + b, (b, (a + b)))) (fun (a,b) -> (a + b) >= max) (0, 1)
 
 (* 2.3 Compute Pascal's triangle up to a maximum row length. *)
 let pascal (max : int) : int list list =
