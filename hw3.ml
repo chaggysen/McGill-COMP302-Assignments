@@ -30,8 +30,13 @@ let fib (max : int) : int list =
     1 :: unfold (fun (a,b) -> (a + b, (b, (a + b)))) (fun (a,b) -> (a + b) >= max) (0, 1)
 
 (* 2.3 Compute Pascal's triangle up to a maximum row length. *)
-let pascal (max : int) : int list list =
-  raise NotImplemented
+let next_row row =
+  List.map2 (+) ([0] @ row) (row @ [0])
+    
+let pascal (max : int) : int list list = 
+  if max = 0 then [] 
+  else 
+    unfold (fun (i, row) -> row, (i + 1, (next_row row))) (fun (i, row) -> i = max) (0, [1])
 
 (* 2.4 Implement zip, which converts two lists into a list of tuples.
        e.g. zip [1; 2] ['a'; 'c'] = [(1, 'a'); (2, 'c')]
