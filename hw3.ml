@@ -43,8 +43,8 @@ let pascal (max : int) : int list list =
        Note that if one list is shorter than the other, then the 
        resulting list should have the length of the smaller list.     *)
 
-let zip (l1 : 'a list) (l2 : 'b list) : ('a * 'b) list =
-  raise NotImplemented
+let zip (l1 : 'a list) (l2 : 'b list) : ('a * 'b) list = 
+  unfold (fun (l1, l2) -> let (x::xs,y::ys) = (l1, l2) in ((x, y), (xs, ys))) (fun (l1, l2) -> match l1, l2 with | [], _ -> true | _, [] -> true | _ -> false)(l1, l2)
 
                   
 (*--------------------------------------------------------------*)
