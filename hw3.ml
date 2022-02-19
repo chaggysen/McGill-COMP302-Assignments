@@ -55,5 +55,9 @@ let zip (l1 : 'a list) (l2 : 'b list) : ('a * 'b) list =
       allergens.                                                         *)
   
 let allergy_free (allergens : ingredient list) (cupcakes : cupcake list)
-  : cupcake list =
-  raise NotImplemented
+  : cupcake list = 
+  if allergens = [] then cupcakes
+  else List.filter (fun cup -> not (let Cupcake(a,b,c,d)=cup in List.exists(fun ing -> (
+        List.for_all(fun i -> List.mem i allergens) [ing] 
+      ))d)) cupcakes
+      
