@@ -6,6 +6,7 @@ let open_account (initial_pass: passwd) : bank_account =
   let password = ref initial_pass in 
   let balance = ref 0 in 
   let wrong_pass_count = ref 0 in
+<<<<<<< HEAD
   let locked = ref false in 
   { 
     update_pass = (fun oldpass newpass -> if oldpass = !password 
@@ -20,6 +21,21 @@ let open_account (initial_pass: passwd) : bank_account =
                  else if (pass = !password && not !locked ) then (wrong_pass_count := 0; if amount < 0 then raise negative_amount else if !balance >= amount then balance := !balance - amount else raise not_enough_balance) else (wrong_pass_count := !wrong_pass_count + 1; raise wrong_pass)) ;
     show_balance = (fun pass -> if !wrong_pass_count >= 5 then (locked := true; raise too_many_failures) else 
                      if (pass = !password && not !locked ) then (!balance) else (wrong_pass_count := !wrong_pass_count + 1; raise wrong_pass))
+=======
+  { 
+    update_pass = (fun oldpass newpass -> if oldpass = !password 
+                    then password := newpass 
+                    else (wrong_pass_count := !wrong_pass_count + 1; raise wrong_pass));
+    deposit = (fun pass amount -> if !wrong_pass_count > 5 
+                then raise too_many_failures else 
+                if pass = !password then (wrong_pass_count:= 0; if amount < 0 then raise negative_amount else balance := !balance + amount) 
+                else (wrong_pass_count := !wrong_pass_count + 1; raise wrong_pass)) ;
+    retrieve = (fun pass amount -> if !wrong_pass_count > 5 
+                 then raise too_many_failures 
+                 else if pass = !password then (wrong_pass_count := 0; if amount < 0 then raise negative_amount else if !balance >= amount then balance := !balance - amount else raise not_enough_balance) else (wrong_pass_count := !wrong_pass_count + 1; raise wrong_pass)) ;
+    show_balance = (fun pass -> if !wrong_pass_count > 5 then raise too_many_failures else 
+                     if pass = !password then (!balance) else (wrong_pass_count := !wrong_pass_count + 1; raise wrong_pass))
+>>>>>>> c8bc8f7400f6f1380a1556ce423f889f95159d0f
   
   }
 ;;
@@ -48,6 +64,7 @@ let neighbours_tests: ((string graph * string) * (string * weight) list) list = 
 
 (* TODO: Implement neighbours. *)
 let neighbours (g: 'a graph) (vertex: 'a) : ('a * weight) list = 
+<<<<<<< HEAD
   List.map (fun (_, v2, w) -> (v2, w)) (List.filter (fun (v1, _, _) -> v1 = vertex) g.edges);; 
 
 let find_all_paths (g: 'a graph) (a: 'a) (b: 'a) : ('a list * weight) list =
@@ -62,6 +79,10 @@ let find_all_paths (g: 'a graph) (a: 'a) (b: 'a) : ('a list * weight) list =
     | _ -> []
   in
   aux_node (a, 0) [];; 
+=======
+  List.map (fun (_, v2, w) -> (v2, w)) (List.filter (fun (v1, _, _) -> v1 = vertex) g.edges);;
+  
+>>>>>>> c8bc8f7400f6f1380a1556ce423f889f95159d0f
 
 (* TODO: Implement find_path. *)
 let find_path (g: 'a graph) (a: 'a) (b: 'a) : ('a list * weight) =
@@ -97,6 +118,10 @@ let find_all_paths (g: 'a graph) (a: 'a) (b: 'a) : ('a list * weight) list =
 
 (* TODO: Implement find_longest_path *)
 let find_longest_path (g: 'a graph) (a: 'a) (b: 'a) : ('a list * weight) option =
+<<<<<<< HEAD
   match List.rev (List.sort (fun a b -> if snd a > snd b then 1 else if snd b > snd a then -1 else 0) (find_all_paths g a b)) with
   | x :: xs -> Some(x)
   | _ -> None
+=======
+  notimplemented ()
+>>>>>>> c8bc8f7400f6f1380a1556ce423f889f95159d0f
