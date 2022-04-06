@@ -27,11 +27,20 @@ let rec unused_vars =
       else
         x :: unused
 
-  | Rec (x, _, e) -> unused_vars e
+  | Rec (x, _, e) -> 
+      let unused = unused_vars e in
+      if List.mem x (free_variables e) then
+        unused
+      else
+        x :: unused 
+        
+  | Fn (xs, e) -> 
+      let unused = unused_vars e in 
+      delete (free_variables e) (List.map (fun (x, _) -> x) xs) @ unused
 
-  | Fn (xs, e) -> raise NotImplemented
-
-  | Apply (e, es) -> raise NotImplemented
+  | Apply (e, es) -> 
+      let unused = unused_vars e in 
+      List.concat((List.map(fun e -> unused_vars e) es)) @ unused
 
 (* TODO: Write a good set of tests for subst. *)
 (* Note: we've added a type annotation here so that the compiler can help

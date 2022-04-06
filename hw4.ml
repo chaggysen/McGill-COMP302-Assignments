@@ -72,11 +72,17 @@ let find_path (g: 'a graph) (a: 'a) (b: 'a) : ('a list * weight) =
 (* TODO: Implement find_path'. *)
 let find_path' (g: 'a graph) (a: 'a) (b: 'a) : ('a list * weight) =
   let rec aux_node (node: 'a * weight) (visited : 'a list) fc sc : ('a list * weight)=
-    notimplemented ()
+    if (List.mem (fst node) visited) then fc () 
+    else if ((fst node) = b) then sc ([fst node], snd node) 
+    else (aux_list (neighbours g (fst node)) (visited @ [fst node])) (fun () -> fc ()) (fun (nodes, weight) -> sc ([fst node] @ nodes, weight + (snd node)))
   and aux_list (nodes: ('a * weight) list) (visited: 'a list) fc sc : ('a list * weight) =
-    notimplemented ()
+    match nodes with 
+    | x :: xs -> let suc2 = sc in
+        let fail2 = fun () -> aux_node x visited fc sc in
+        aux_list xs visited fail2 suc2
+    | _ -> fc ()
   in
-  notimplemented ()
+  aux_node (a, 0) [] (fun () -> raise Fail) (fun (nodes, weight) -> (nodes, weight));;
 
 
 (* TODO: Implement find_all_paths *)
