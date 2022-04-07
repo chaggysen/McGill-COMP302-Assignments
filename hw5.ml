@@ -55,7 +55,7 @@ let subst_tests : (((exp * name) * exp) * exp) list = [
     Let ("y", I 2, Primop (Plus, [Var "y"; Var "x"]))),
    (* let y = 2 in y + 1 *)
    Let ("y", I 2, Primop (Plus, [Var "y"; I 1]))); 
-  (((I 1, "x"), ex1), ex1);
+  (((I 1, "x"), ex1), ex1); 
   (((I 1, "x"), Rec("x", Int, Var "x")), Rec("x", Int, Var "x"));
   (((I 1, "x"),Rec ("f", Int, Primop(Plus, [Var "x"; I 5]))),
    Rec ("f", Int, Primop(Plus, [I 1; I 5])));
@@ -94,11 +94,20 @@ let rec subst ((e', x) as s) exp =
         in
         Let (y, e1', subst s e2)
 
-  | Rec (y, t, e) -> raise NotImplemented
+  | Rec (y, t, e) -> 
+      if x = y then Rec (y, t, e)
+      else 
+      if List.mem y (free_variables e') then
+        let (y, e1) = rename y e in 
+        Rec (y, t, subst s e1)
+      else
+        Rec (y, t, subst s e) 
+          
+  | Apply (e, es) -> Apply (subst s e, (List.map(fun e -> subst s e) es) )
 
-  | Fn (xs, e) -> raise NotImplemented
-
-  | Apply (e, es) -> raise NotImplemented
+  | Fn (xs, e) -> 
+      let (new_names, new_e) = rename_all (List.map (fun (x, _) -> x) xs) e in
+      Fn((List.map2(fun a b -> (a, snd b)) new_names xs), subst s new_e) 
 
 and rename x e =
   let x' = freshVar x in
