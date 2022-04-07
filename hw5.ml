@@ -55,21 +55,18 @@ let subst_tests : (((exp * name) * exp) * exp) list = [
     Let ("y", I 2, Primop (Plus, [Var "y"; Var "x"]))),
    (* let y = 2 in y + 1 *)
    Let ("y", I 2, Primop (Plus, [Var "y"; I 1]))); 
-  (((I 1, "x"),
-    Fn ([], I 4)),
-   Fn ([], I 4)); 
-  (((I 1, "x"),
-    Fn ([], Var "x")),
-   Fn ([], I 1));
-  (((I 1, "x"),
-    Fn ([], Var "y")),
-   Fn ([], Var "y")); 
   (((I 1, "x"), ex1), ex1);
+  (((I 1, "x"), Rec("x", Int, Var "x")), Rec("x", Int, Var "x"));
   (((I 1, "x"),Rec ("f", Int, Primop(Plus, [Var "x"; I 5]))),
    Rec ("f", Int, Primop(Plus, [I 1; I 5])));
   (((I 1, "x"),Apply (Var "f", [I 3])), Apply (Var "f", [I 3])); 
-  (((I 1, "x"),Apply (Fn ([], Var "x"), [I 3])), Apply (Fn ([], I 1), [I 3])); 
-
+  (((Let("y", I 2, Primop (Times, [Var "x"; Var "y"])), "y"), Fn ([("x", Int)], Primop (Plus, [Var "y"; Var "x"]))),
+   Fn ([("x1", Int)], Primop (Plus,[Let("y", I 2, Primop (Times, [Var "x"; Var "y"])); Var "x1"]))); 
+  (((Let("y", I 2, Primop (Plus, [Var "x"; Var "y"])), "y"), Rec ("x", Int, Fn ([("x", Int)], Primop (Plus, [Var "y"; Var "x"])))),
+   Rec ("x1", Int, Fn ([("x1", Int)], Primop (Plus, [Let("y", I 2, Primop (Plus, [Var "x"; Var "y"])); Var "x1"]))));
+  (((Let("y", I 2, Primop (Times, [Var "x"; Var "y"])), "y"), Apply (Fn ([("x", Int)], Primop (Plus, [Var "y"; Var "x"])), [Var "x"; Var "y"])),
+   Apply (Fn ([("x1", Int)], Primop (Plus, [Let("y", I 2, Primop (Times, [Var "x"; Var "y"])); Var "x1"])), [Var "x"; Let("y", I 2, Primop (Times, [Var "x"; Var "y"]))]))
+  
 ]
   
       
