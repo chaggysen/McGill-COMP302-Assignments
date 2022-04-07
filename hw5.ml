@@ -54,9 +54,25 @@ let subst_tests : (((exp * name) * exp) * exp) list = [
     (* let y = 2 in y + x *)
     Let ("y", I 2, Primop (Plus, [Var "y"; Var "x"]))),
    (* let y = 2 in y + 1 *)
-   Let ("y", I 2, Primop (Plus, [Var "y"; I 1])))
-]
+   Let ("y", I 2, Primop (Plus, [Var "y"; I 1]))); 
+  (((I 1, "x"),
+    Fn ([], I 4)),
+   Fn ([], I 4)); 
+  (((I 1, "x"),
+    Fn ([], Var "x")),
+   Fn ([], I 1));
+  (((I 1, "x"),
+    Fn ([], Var "y")),
+   Fn ([], Var "y")); 
+  (((I 1, "x"), ex1), ex1);
+  (((I 1, "x"),Rec ("f", Int, Primop(Plus, [Var "x"; I 5]))),
+   Rec ("f", Int, Primop(Plus, [I 1; I 5])));
+  (((I 1, "x"),Apply (Var "f", [I 3])), Apply (Var "f", [I 3])); 
+  (((I 1, "x"),Apply (Fn ([], Var "x"), [I 3])), Apply (Fn ([], I 1), [I 3])); 
 
+]
+  
+      
 (* TODO: Implement the missing cases of subst. *)
 let rec subst ((e', x) as s) exp =
   match exp with
@@ -102,7 +118,7 @@ and rename_all names exp =
 (* Applying a list of substitutions to an expression, leftmost first *)
 let subst_list subs exp =
   List.fold_left (fun exp sub -> subst sub exp) exp subs
-
+    
 (* TODO: Write a good set of tests for eval. *)
 let eval_tests = [
   (* An example test case.
