@@ -130,7 +130,14 @@ let eval_tests = [
   (* An example test case.
      Note that you are *only* required to write tests for Rec and Apply!
   *)
-  (Let ("x", I 1, Primop (Plus, [Var "x"; I 5])), I 6)
+  (Let ("x", I 1, Primop (Plus, [Var "x"; I 5])), I 6);
+  (Rec ("x", Int, Primop (Plus, [I 1; I 1])), I 2);
+  (Apply (Fn ([("x", Int)], Primop (Plus, [I 1; I 1])), [I 1]), I 2);
+  (Apply (Fn ([("x", Int); ("y", Int)], Primop (Plus, [I 1; I 1])), [I 1; I 1]), I 2);
+  (Apply (Fn ([("x", Int); ("y", Int)], Primop (Plus, [Var "x"; Var "y"])), [I 2; I 3]), I 5);
+  (Apply (Let ("x", I 1, Fn ([("y", Int)], Primop (Plus, [I 1; I 1]))), [I 2]), I 2);
+  (Apply (Fn ([], Primop (Plus, [I 1; I 1])), []), I 2);
+  (Let ("y", I 2, Rec ("x", Int, Primop (Plus, [Var "y"; I 1]))), I 3)
 ]
 
 (* TODO: Implement the missing cases of eval. *)
@@ -169,9 +176,15 @@ let rec eval exp =
       let e1 = eval e1 in
       eval (subst (e1, x) e2)
 
-  | Rec (f, _, e) -> raise NotImplemented
+  | Rec (f, t, e) -> eval (subst (Rec (f, t, e), f) e)
 
-  | Apply (e, es) -> raise NotImplemented
+  | Apply (e, es) ->
+      match (eval e) with 
+      | Fn (xs, f_exp) -> let vs =  List.map(fun a_exp -> eval a_exp) es in
+          let ns = List.map(fun (n, t) -> n) xs in
+          if List.length vs = List.length ns then let sub_rules = List.combine vs ns in eval (subst_list sub_rules f_exp) 
+          else raise (Stuck Arity_mismatch)
+      | _ -> raise (Stuck Apply_non_fn)
 
 (* TODO: Write a good set of tests for infer. *)
 let infer_tests = [
