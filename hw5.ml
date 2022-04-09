@@ -138,6 +138,8 @@ let eval_tests = [
   (Apply (Let ("x", I 1, Fn ([("y", Int)], Primop (Plus, [I 1; I 1]))), [I 2]), I 2);
   (Apply (Fn ([], Primop (Plus, [I 1; I 1])), []), I 2);
   (Let ("y", I 2, Rec ("x", Int, Primop (Plus, [Var "y"; I 1]))), I 3)
+  
+
 ]
 
 (* TODO: Implement the missing cases of eval. *)
@@ -191,7 +193,14 @@ let infer_tests = [
   (* An example test case.
      Note that you are *only* required to write tests for Rec, Fn, and Apply!
   *)
-  (([("x", Int)], Var "x"), Int)
+  (([("x", Int)], Var "x"), Int);
+  (([("y", Int)], Rec ("x", Int, Primop (Plus, [Var "x"; Var "y"]))), Int);
+  (([], Fn([("x", Int)], Primop(Plus, [Var "x"; Var "x"]))), Arrow ([Int], Int));
+  (([], Fn([("x", Int); ("y", Int)], Primop(Plus, [Var "x"; Var "y"]))), Arrow ([Int; Int], Int)); 
+  (([], Fn([], Primop(Plus, [I 1; I 1]))), Arrow ([], Int));
+  (([], Apply(Fn ([("x", Int)], Primop (Equals, [Var "x"; I 3])), [I 3])), Bool);
+  (([], Apply(Fn ([("x", Int);("y", Int)], Primop (Equals, [Var "x"; Var "y"])), [I 3; I 3])), Bool);
+  (([], Apply(Fn ([], Primop (Equals, [I 1; I 1])), [])), Bool)
 ]
 
 (* TODO: Implement the missing cases of infer. *)
