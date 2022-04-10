@@ -233,11 +233,26 @@ let rec infer ctx e =
       let t1 = infer ctx e1 in
       infer (extend ctx (x, t1)) e2
 
-  | Rec (f, t, e) -> raise NotImplemented
+  | Rec (f, t, e) -> let tstar = (infer (extend ctx (f, t)) e) in
+      if t = tstar then t else type_mismatch t tstar
+  | Fn (xs, e) -> let tstar = (infer (extend_list ctx xs) e) in
+      Arrow(List.map(fun (_, t) -> t) xs, tstar)
 
-  | Fn (xs, e) -> raise NotImplemented
-
-  | Apply (e, es) -> raise NotImplemented
+  | Apply (e, es) -> let fnType = (infer ctx e) in 
+      let argsType = List.map(fun exp -> (infer ctx exp)) es in
+      match fnType with
+      | Arrow(t, tstar) -> 
+          if (List.compare_lengths t argsType) = 0 then (
+            let pairs = List.combine t argsType in
+            let equalTypes = List.map (fun (t1, t2) -> t1 = t2) pairs in
+            let looking_for (a, b) = (a != b) in 
+            if List.exists (fun x -> x = false) equalTypes then 
+              let (expectedt, actualt) = List.find looking_for pairs in 
+              type_mismatch expectedt actualt
+            else tstar
+          )    
+          else raise (TypeError (Arity_mismatch))
+      | _ -> raise (TypeError (Apply_non_arrow (fnType)))
 
 and check ctx exps tps result =
   match exps, tps with
