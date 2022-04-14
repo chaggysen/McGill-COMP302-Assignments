@@ -274,7 +274,8 @@ let unify : utp -> utp -> utp UTVarMap.t =
 
     (* For type constructors, recursively unify the parts *)
     | UArrow (t1, t1'), UArrow (t2, t2') ->
-        raise NotImplemented
+        let newsub = unify substitution t1 t2 in
+        unify newsub t1' t2';
 
     | UTVar a, _ -> unifyVar substitution a t2
     | _, UTVar b -> unifyVar substitution b t1
@@ -293,7 +294,9 @@ let unify : utp -> utp -> utp UTVarMap.t =
             match UTVarMap.find_opt b substitution with
             | None -> false
             | Some t' -> occurs t'
-    in
-    raise NotImplemented
+    in 
+    match UTVarMap.find_opt a substitution with 
+    | None -> UTVarMap.add a t substitution 
+    | Some t' -> unify substitution t t';
 
   in fun t1 t2 -> unify UTVarMap.empty t1 t2
