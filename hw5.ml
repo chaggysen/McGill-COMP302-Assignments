@@ -183,7 +183,7 @@ let rec eval exp =
   | Apply (e, es) ->
       match (eval e) with 
       | Fn (xs, f_exp) -> let vs =  List.map(fun a_exp -> eval a_exp) es in
-          let ns = List.map(fun (n, t) -> n) xs in
+          let ns = List.map(fun (n, _) -> n) xs in
           if List.length vs = List.length ns then let sub_rules = List.combine vs ns in eval (subst_list sub_rules f_exp) 
           else raise (Stuck Arity_mismatch)
       | _ -> raise (Stuck Apply_non_fn)
