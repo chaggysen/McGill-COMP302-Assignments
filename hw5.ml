@@ -295,8 +295,10 @@ let unify : utp -> utp -> utp UTVarMap.t =
             | None -> false
             | Some t' -> occurs t'
     in 
-    match UTVarMap.find_opt a substitution with 
-    | None -> UTVarMap.add a t substitution 
-    | Some t' -> unify substitution t t';
+    if occurs t then unif_error UnifOccursCheckFails 
+    else
+      match UTVarMap.find_opt a substitution with 
+      | None -> UTVarMap.add a t substitution 
+      | Some t' -> unify substitution t t';
 
   in fun t1 t2 -> unify UTVarMap.empty t1 t2
